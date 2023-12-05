@@ -1,19 +1,31 @@
 #include "main.h"
 #include <stdarg.h>
+#include <stdlib.h>
+#include <string.h>
 
 /**
  * _itoa - Converts an integer to a string.
  * @n: The integer to be converted.
  * @str: The buffer to store the resulting string.
+ * @buf_size: The size of the buffer.
  * Return: The length of the string.
  */
-int _itoa(int n, char *str)
+int _itoa(int n, char *str, int buf_size)
 {
 	int i = 0, temp = 0, is_neg = 0, j = 0;
+	char *buffer = NULL;
+
+	if (buf_size <= 0)
+		return (0);
+
+	buffer = (char *)malloc(buf_size);
+
+	if (buffer == NULL)
+		return (0);
 
 	if (n == 0)
 	{
-		str[i++] = '0';
+		buffer[i++] = '0';
 	}
 	else if (n < 0)
 	{
@@ -24,23 +36,29 @@ int _itoa(int n, char *str)
 	temp = n;
 	while (temp != 0)
 	{
-		str[i++] = '0' + (temp % 10);
+		buffer[i++] = '0' + (temp % 10);
 		temp /= 10;
+
+		if (i >= buf_size - 1)
+			break;
 	}
 
 	if (is_neg)
-		str[i++] = '-';
+		buffer[i++] = '-';
 
 	for (j = 0; j < i / 2; j++)
 	{
-		char temp_char = str[j];
-		str[j] = str[i - j - 1];
-		str[i - j - 1] = temp_char;
+		char temp_char = buffer[j];
+
+		buffer[j] = buffer[i - j - 1];
+		buffer[i - j - 1] = temp_char;
 	}
 
-	str[i] = '\0';
+	buffer[i] = '\0';
+	strncpy(str, buffer, buf_size);
+	free(buffer);
 
-	return i;
+	return (i);
 }
 
 /**
@@ -50,7 +68,7 @@ int _itoa(int n, char *str)
  */
 int _putchar(char c)
 {
-	return write(1, &c, 1);
+	return (write(1, &c, 1));
 }
 
 /**
@@ -69,7 +87,7 @@ int _puts(char *str)
 		ptr++;
 	}
 
-	return count;
+	return (count);
 }
 
 /**
@@ -80,10 +98,9 @@ int _puts(char *str)
  */
 int _printf(const char *format, ...)
 {
-	char buf[11];
+	char *str, buf[1024];
 	int i = 0, n = 0, count = 0;
 	va_list args;
-	char *str;
 
 	va_start(args, format);
 	while (format && format[i])
@@ -98,8 +115,6 @@ int _printf(const char *format, ...)
 					break;
 				case 's':
 					str = va_arg(args, char *);
-					if (str == NULL)
-						str = "(null)";
 					count += _puts(str);
 					break;
 				case '%':
@@ -108,7 +123,7 @@ int _printf(const char *format, ...)
 				case 'd':
 				case 'i':
 					n = va_arg(args, int);
-					_itoa(n, buf);
+					count += _itoa(n, buf, sizeof(buf));
 					count += _puts(buf);
 					break;
 				default:
@@ -122,6 +137,5 @@ int _printf(const char *format, ...)
 		i++;
 	}
 	va_end(args);
-	return count;
+	return (count);
 }
-
