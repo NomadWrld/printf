@@ -17,22 +17,17 @@ int _itoa(int n, char *str, int buf_size)
 
 	if (buf_size <= 0)
 		return (0);
-
 	buffer = (char *)malloc(buf_size);
-
 	if (buffer == NULL)
 		return (0);
 
 	if (n == 0)
-	{
 		buffer[i++] = '0';
-	}
 	else if (n < 0)
 	{
 		is_neg = 1;
 		n = -n;
 	}
-
 	temp = n;
 	while (temp != 0)
 	{
@@ -42,7 +37,6 @@ int _itoa(int n, char *str, int buf_size)
 		if (i >= buf_size - 1)
 			break;
 	}
-
 	if (is_neg)
 		buffer[i++] = '-';
 
@@ -53,13 +47,13 @@ int _itoa(int n, char *str, int buf_size)
 		buffer[j] = buffer[i - j - 1];
 		buffer[i - j - 1] = temp_char;
 	}
-
 	buffer[i] = '\0';
 	strncpy(str, buffer, buf_size);
 	free(buffer);
 
 	return (i);
 }
+
 
 /**
  * _putchar - Writes a character to the standard output (stdout)
@@ -139,3 +133,6 @@ int _printf(const char *format, ...)
 	va_end(args);
 	return (count);
 }
+
+
+
