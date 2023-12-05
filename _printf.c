@@ -1,126 +1,96 @@
 #include "main.h"
 
 /**
- * _itoa - Converts an integer to a string.
- * @n: The integer to be converted.
- * @str: The buffer to store the resulting string.
- * Return: The length of the string.
+ * _printf - Custom implementation of printf function
+ * @format: The format string
+ * Return: Number of characters printed
  */
-int _itoa(int n, char *str)
+int _printf(const char *format, ...)
 {
-	int i = 0, temp = 0;
-	int is_negative = 0;
-	int j;
+	int count;
+	va_list args;
 
-	if (n == 0)
-	{
-		str[i++] = '0';
-	}
-	else if (n < 0)
-	{
-		is_negative = 1;
-		n = -n;
-	}
-
-	temp = n;
-	while (temp != 0)
-	{
-		str[i++] = '0' + (temp % 10);
-		temp /= 10;
-	}
-
-	if (is_negative)
-		str[i++] = '-';
-
-	for (j = 0; j < i / 2; j++)
-	{
-		char temp_char = str[j];
-
-		str[j] = str[i - j - 1];
-		str[i - j - 1] = temp_char;
-	}
-
-	str[i] = '\0';
-
-	return (i);
-}
-
-
-/**
- * _putchar - Writes a character to the standard output (stdout)
- * @c: The character to be written.
- * Return: The number of characters written.
- */
-int _putchar(char c)
-{
-	return (write(1, &c, 1));
-}
-
-/**
- * _puts - Writes a string to the standard output (stdout)
- * @str: The string to be written.
- * Return: The number of characters written.
- */
-int _puts(char *str)
-{
-	int count = 0;
-	char *ptr = str;
-
-	while (ptr && *ptr)
-	{
-		count += _putchar(*ptr);
-		ptr++;
-	}
-
+	if (format == NULL)
+		return (-1);
+	va_start(args, format);
+	count = parse_format(format, args);
+	va_end(args);
 	return (count);
 }
 
 /**
- * _printf - A simplified printf function.
- * @format: The format string.
- * @...: Additional arguments.
- * Return: The number of characters printed.
+ * process_format - Processes the format specifier and prints accordingly
+ * @format: The format string
+ * @i: The current index in the format string
+ * @args: List of variadic arguments
+ * @formats: Array of format specifiers and corresponding functions
+ *
+ * Return: Number of characters printed
  */
-int _printf(const char *format, ...)
+int process_format(const char *format, int i, va_list args, format_t *formats)
 {
-	char *str, buf[11];
-	int i = 0, n = 0, count = 0;
-	va_list args;
+	int j, char_count = 0;
 
-	va_start(args, format);
-	while (format && format[i])
+	for (j = 0; formats[j].symbol; j++)
+	{
+		if (format[i] == *formats[j].symbol)
+		{
+			char_count = formats[j].func(args);
+			break;
+		}
+	}
+
+	if (formats[j].symbol == NULL)
+	{
+		_putchar('%');
+		_putchar(format[i]);
+		char_count += 2;
+	}
+
+	return (char_count);
+}
+
+/**
+ * parse_format - Processes the format string and the list
+ *                of arguments to print a formatted string accordingly.
+ * @format: The format string
+ * @args: List of variadic arguments
+ *
+ * Return: Number of characters printed
+ */
+int parse_format(const char *format, va_list args)
+{
+	format_t formats[] = {
+		{"c", print_char},
+		{"s", print_string},
+		{"%", print_percent},
+		{"d", print_integer},
+		{"i", print_integer},
+		{NULL, NULL}
+	};
+
+	int i = 0, char_count = 0, printed_chars = 0;
+
+	while (format[i])
 	{
 		if (format[i] == '%')
 		{
 			i++;
-			switch (format[i])
-			{
-				case 'c':
-					count += _putchar(va_arg(args, int));
-					break;
-				case 's':
-					str = va_arg(args, char *);
-					count += _puts(str);
-					break;
-				case '%':
-					count += _putchar('%');
-					break;
-				case 'd':
-				case 'i':
-					n = va_arg(args, int);
-					_itoa(n, buf);
-					count += _puts(buf);
-					break;
-				default:
-					count += _putchar('%');
-					count += _putchar(format[i]);
-					break;
-			}
+			if (!format[i])
+				return (-1);
+
+			char_count = process_format(format, i, args, formats);
+
+			if (char_count == -1)
+				return (-1);
+			printed_chars += char_count;
 		}
 		else
-			count += _putchar(format[i]);
+		{
+			_putchar(format[i]);
+			printed_chars++;
+		}
 		i++;
 	}
-	va_end(args);
-	return (count);
+	return (printed_chars);
 }
