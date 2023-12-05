@@ -1,7 +1,6 @@
 #include "main.h"
 #include <stdarg.h>
 #include <stdlib.h>
-#include <string.h>
 
 /**
  * _itoa - Converts an integer to a string.
@@ -53,8 +52,6 @@ int _itoa(int n, char *str, int buf_size)
 
 	return (i);
 }
-
-
 /**
  * _putchar - Writes a character to the standard output (stdout)
  * @c: The character to be written.
@@ -82,6 +79,26 @@ int _puts(char *str)
 	}
 
 	return (count);
+}
+
+/**
+ * _strncpy - Copies at most n characters from src to dest.
+ * @dest: The destination string.
+ * @src: The source string.
+ * @n: The maximum number of characters to copy.
+ * Return: A pointer to the destination string.
+ */
+char *_strncpy(char *dest, const char *src, size_t n)
+{
+	size_t i;
+
+	for (i = 0; i < n && src[i] != '\0'; i++)
+		dest[i] = src[i];
+
+	for (; i < n; i++)
+		dest[i] = '\0';
+
+	return dest;
 }
 
 /**
@@ -133,6 +150,4 @@ int _printf(const char *format, ...)
 	va_end(args);
 	return (count);
 }
-
-
 

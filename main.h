@@ -4,6 +4,7 @@
 #include <stdarg.h>
 #include <unistd.h>
 
+char *_strncpy(char *dest, const char *src, size_t n);
 int _putchar(char c);
 int _puts(char *str);
 int _itoa(int n, char *str);
