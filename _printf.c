@@ -4,52 +4,47 @@
  * _itoa - Converts an integer to a string.
  * @n: The integer to be converted.
  * @str: The buffer to store the resulting string.
- * @buf_size: The size of the buffer.
  * Return: The length of the string.
  */
-int _itoa(int n, char *str, int buf_size)
+int _itoa(int n, char *str)
 {
-	int i = 0, temp = 0, is_neg = 0, j = 0;
-	char *buffer = NULL;
-
-	if (buf_size <= 0)
-		return (0);
-	buffer = (char *)malloc(buf_size);
-	if (buffer == NULL)
-		return (0);
+	int i = 0, temp = 0;
+	int is_negative = 0;
+	int j;
 
 	if (n == 0)
-		buffer[i++] = '0';
+	{
+		str[i++] = '0';
+	}
 	else if (n < 0)
 	{
-		is_neg = 1;
+		is_negative = 1;
 		n = -n;
 	}
+
 	temp = n;
 	while (temp != 0)
 	{
-		buffer[i++] = '0' + (temp % 10);
+		str[i++] = '0' + (temp % 10);
 		temp /= 10;
-
-		if (i >= buf_size - 1)
-			break;
 	}
-	if (is_neg)
-		buffer[i++] = '-';
+
+	if (is_negative)
+		str[i++] = '-';
 
 	for (j = 0; j < i / 2; j++)
 	{
-		char temp_char = buffer[j];
+		char temp_char = str[j];
 
-		buffer[j] = buffer[i - j - 1];
-		buffer[i - j - 1] = temp_char;
+		str[j] = str[i - j - 1];
+		str[i - j - 1] = temp_char;
 	}
-	buffer[i] = '\0';
-	_strncpy(str, buffer, buf_size);
-	free(buffer);
+
+	str[i] = '\0';
 
 	return (i);
 }
+
 
 /**
  * _putchar - Writes a character to the standard output (stdout)
@@ -81,27 +76,6 @@ int _puts(char *str)
 }
 
 /**
- * _strncpy - Copies at most n characters from src to dest.
- * @dest: The destination string.
- * @src: The source string.
- * @n: The maximum number of characters to copy.
- * Return: A pointer to the destination string.
- */
-char *_strncpy(char *dest, const char *src, size_t n)
-{
-	size_t i;
-
-	for (i = 0; i < n && src[i] != '\0'; i++)
-		dest[i] = src[i];
-
-	for (; i < n; i++)
-		dest[i] = '\0';
-
-	return (dest);
-}
-
-
-/**
  * _printf - A simplified printf function.
  * @format: The format string.
  * @...: Additional arguments.
@@ -109,13 +83,9 @@ char *_strncpy(char *dest, const char *src, size_t n)
  */
 int _printf(const char *format, ...)
 {
-	char *str, *buf = NULL;
+	char *str, buf[11];
 	int i = 0, n = 0, count = 0;
 	va_list args;
-
-	buf = (char *)malloc(BUFF_SIZE);
-	if (buf == NULL)
-		return (-1);
 
 	va_start(args, format);
 	while (format && format[i])
@@ -138,7 +108,7 @@ int _printf(const char *format, ...)
 				case 'd':
 				case 'i':
 					n = va_arg(args, int);
-					count += _itoa(n, buf, sizeof(buf));
+					_itoa(n, buf);
 					count += _puts(buf);
 					break;
 				default:
@@ -152,6 +122,5 @@ int _printf(const char *format, ...)
 		i++;
 	}
 	va_end(args);
-	free(buf);
 	return (count);
 }
