@@ -1,4 +1,50 @@
 #include "main.h"
+#include <stdarg.h>
+
+/**
+ * _itoa - Converts an integer to a string.
+ * @n: The integer to be converted.
+ * @str: The buffer to store the resulting string.
+ * Return: The length of the string.
+ */
+int _itoa(int n, char *str)
+{
+	int i = 0, temp = 0, is_neg = 0, j = 0;
+
+
+	if (n == 0)
+	{
+		str[i++] = '0';
+	}
+	else if (n < 0)
+	{
+		is_neg = 1;
+		n = -n;
+	}
+
+	temp = n;
+	while (temp != 0)
+	{
+		str[i++] = '0' + (temp % 10);
+		temp /= 10;
+	}
+
+	if (is_neg)
+		str[i++] = '-';
+
+	for (j = 0; j < i / 2; j++)
+	{
+		char temp_char = str[j];
+
+		str[j] = str[i - j - 1];
+		str[i - j - 1] = temp_char;
+	}
+
+	str[i] = '\0';
+
+	return (i);
+}
+
 
 /**
  * _putchar - Writes a character to the standard output (stdout)
@@ -30,42 +76,6 @@ int _puts(char *str)
 }
 
 /**
- * _itoa - Converts an integer to a string.
- * @n: The integer to be converted.
- * @str: The buffer to store the resulting string.
- * Return: The length of the string.
- */
-int _itoa(int n, char *str)
-{
-	int i = 0, temp = 0;
-
-	if (n == 0)
-		str[i++] = '0';
-	else if (n < 0)
-	{
-		str[i++] = '-';
-		n = -n;
-	}
-
-	temp = n;
-	while (temp != 0)
-	{
-		temp /= 10;
-		i++;
-	}
-
-	str[i] = '\0';
-
-	while (n != 0)
-	{
-		str[--i] = '0' + (n % 10);
-		n /= 10;
-	}
-
-	return (i);
-}
-
-/**
  * _printf - A simplified printf function.
  * @format: The format string.
  * @...: Additional arguments.
@@ -74,7 +84,7 @@ int _itoa(int n, char *str)
 int _printf(const char *format, ...)
 {
 	char *str, buf[11];
-	int i = 0, len = 0, n = 0, count = 0;
+	int i = 0, n = 0, count = 0;
 	va_list args;
 
 	va_start(args, format);
@@ -98,8 +108,8 @@ int _printf(const char *format, ...)
 				case 'd':
 				case 'i':
 					n = va_arg(args, int);
-					len = _itoa(n, buf);
-					count += _puts(buf + len);
+					_itoa(n, buf);
+					count += _puts(buf);
 					break;
 				default:
 					count += _putchar('%');
