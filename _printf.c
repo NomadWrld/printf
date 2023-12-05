@@ -1,121 +1,18 @@
 #include "main.h"
-#include <stdarg.h>
-#include <stdlib.h>
 
 /**
- * _itoa - Converts an integer to a string.
- * @n: The integer to be converted.
- * @str: The buffer to store the resulting string.
- * @buf_size: The size of the buffer.
- * Return: The length of the string.
- */
-int _itoa(int n, char *str, int buf_size)
-{
-	int i = 0, temp = 0, is_neg = 0, j = 0;
-	char *buffer = NULL;
-
-	if (buf_size <= 0)
-		return (0);
-	buffer = (char *)malloc(buf_size);
-	if (buffer == NULL)
-		return (0);
-
-	if (n == 0)
-		buffer[i++] = '0';
-	else if (n < 0)
-	{
-		is_neg = 1;
-		n = -n;
-	}
-	temp = n;
-	while (temp != 0)
-	{
-		buffer[i++] = '0' + (temp % 10);
-		temp /= 10;
-
-		if (i >= buf_size - 1)
-			break;
-	}
-	if (is_neg)
-		buffer[i++] = '-';
-
-	for (j = 0; j < i / 2; j++)
-	{
-		char temp_char = buffer[j];
-
-		buffer[j] = buffer[i - j - 1];
-		buffer[i - j - 1] = temp_char;
-	}
-	buffer[i] = '\0';
-	_strncpy(str, buffer, buf_size);
-	free(buffer);
-
-	return (i);
-}
-
-/**
- * _putchar - Writes a character to the standard output (stdout)
- * @c: The character to be written.
- * Return: The number of characters written.
- */
-int _putchar(char c)
-{
-	return (write(1, &c, 1));
-}
-
-/**
- * _puts - Writes a string to the standard output (stdout)
- * @str: The string to be written.
- * Return: The number of characters written.
- */
-int _puts(char *str)
-{
-	int count = 0;
-	char *ptr = str;
-
-	while (ptr && *ptr)
-	{
-		count += _putchar(*ptr);
-		ptr++;
-	}
-
-	return (count);
-}
-
-/**
- * _strncpy - Copies at most n characters from src to dest.
- * @dest: The destination string.
- * @src: The source string.
- * @n: The maximum number of characters to copy.
- * Return: A pointer to the destination string.
- */
-char *_strncpy(char *dest, const char *src, size_t n)
-{
-	size_t i;
-
-	for (i = 0; i < n && src[i] != '\0'; i++)
-		dest[i] = src[i];
-
-	for (; i < n; i++)
-		dest[i] = '\0';
-
-	return (dest);
-}
-
-
-/**
- * _printf - A simplified printf function.
- * @format: The format string.
- * @...: Additional arguments.
+ * process_format - Processes the format string and variable arguments.
+ * @format: The format string containing the conversion specifiers.
+ * @args: The variable argument list.
+ * @buf: The buffer used for integer to string conversion.
+ *
  * Return: The number of characters printed.
  */
-int _printf(const char *format, ...)
+int process_format(const char *format, va_list args, char *buf)
 {
-	char *str, buf[1024];
+	char *str;
 	int i = 0, n = 0, count = 0;
-	va_list args;
 
-	va_start(args, format);
 	while (format && format[i])
 	{
 		if (format[i] == '%')
@@ -149,6 +46,33 @@ int _printf(const char *format, ...)
 			count += _putchar(format[i]);
 		i++;
 	}
+
+	return (count);
+}
+
+/**
+ * _printf - A simplified printf function implementation.
+ * @format: The format string containing the conversion specifiers.
+ *
+ * This function prints the formatted output to the standard output.
+ * It supports the following conversion specifiers: %c, %s, %%, %d, and %i.
+ *
+ * Return: The number of characters printed, or -1 if an error occurs.
+ */
+int _printf(const char *format, ...)
+{
+	char *buf = NULL;
+	int count = 0;
+	va_list args;
+
+	buf = (char *)malloc(BUFF_SIZE);
+	if (buf == NULL)
+		return (-1);
+	va_start(args, format);
+
+	count = process_format(format, args, buf);
+
 	va_end(args);
+	free(buf);
 	return (count);
 }
