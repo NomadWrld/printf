@@ -50,7 +50,7 @@ int _itoa(int n, char *str)
  */
 int _putchar(char c)
 {
-	return (write(1, &c, 1));
+	return write(1, &c, 1);
 }
 
 /**
@@ -80,9 +80,10 @@ int _puts(char *str)
  */
 int _printf(const char *format, ...)
 {
+	char buf[11];
 	int i = 0, n = 0, count = 0;
 	va_list args;
-	char buf[11], *str;
+	char *str;
 
 	va_start(args, format);
 	while (format && format[i])
@@ -97,6 +98,8 @@ int _printf(const char *format, ...)
 					break;
 				case 's':
 					str = va_arg(args, char *);
+					if (str == NULL)
+						str = "(null)";
 					count += _puts(str);
 					break;
 				case '%':
