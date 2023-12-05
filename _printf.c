@@ -11,7 +11,6 @@ int _itoa(int n, char *str)
 {
 	int i = 0, temp = 0, is_neg = 0, j = 0;
 
-
 	if (n == 0)
 	{
 		str[i++] = '0';
@@ -35,16 +34,14 @@ int _itoa(int n, char *str)
 	for (j = 0; j < i / 2; j++)
 	{
 		char temp_char = str[j];
-
 		str[j] = str[i - j - 1];
 		str[i - j - 1] = temp_char;
 	}
 
 	str[i] = '\0';
 
-	return (i);
+	return i;
 }
-
 
 /**
  * _putchar - Writes a character to the standard output (stdout)
@@ -72,7 +69,7 @@ int _puts(char *str)
 		ptr++;
 	}
 
-	return (count);
+	return count;
 }
 
 /**
@@ -83,9 +80,9 @@ int _puts(char *str)
  */
 int _printf(const char *format, ...)
 {
-	char *str, buf[11];
 	int i = 0, n = 0, count = 0;
 	va_list args;
+	char buf[11], *str;
 
 	va_start(args, format);
 	while (format && format[i])
@@ -122,5 +119,6 @@ int _printf(const char *format, ...)
 		i++;
 	}
 	va_end(args);
-	return (count);
+	return count;
 }
+
